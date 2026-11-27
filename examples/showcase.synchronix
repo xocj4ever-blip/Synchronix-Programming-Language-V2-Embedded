@@ -1,0 +1,105 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Copyright 2026 Synchronix Contributors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Full license text: ../LICENSE
+// End-User License Agreement: ../EULA.md
+
+// ============================================================================
+// SYNCHRONIX EMBEDDED FULL V2 PARITY SHOWCASE (examples/showcase.synchronix)
+// ============================================================================
+
+phi math_axiom = (6 * 7) == 42
+
+func identity<T>(x: T) -> T {
+    return x
+}
+
+func square(n: Int) -> Int {
+    return n * n
+}
+
+func safe_div(a: Int, b: Int) -> Int
+    requires b != 0
+{
+    prove a >= 0
+    return a / b
+}
+
+func factorial(n: Int) -> Int {
+    var acc = 1
+    var i = 1
+    while i <= n {
+        acc = acc * i
+        i = i + 1
+    }
+    return acc
+}
+
+func scope_demo() -> Int {
+    let temp_arc = arc(777)
+    let temp_alias = temp_arc
+    val temp_gc = gc(888)
+    return temp_alias + temp_gc
+}
+
+async func worker(id: Int) -> Int {
+    let val_sq = square(id) + 10
+    return val_sq
+}
+
+func main() -> Int {
+    println("=== SYNCHRONIX EMBEDDED V2 PARITY SHOWCASE ===")
+
+    let box = arc(42)
+    let alias = box
+    print("1. ARC box + alias  : "); println(alias)
+
+    val managed = gc(100)
+    print("2. GC managed value : "); println(managed)
+
+    let owner = 77
+    let ref = borrow owner
+    print("3. Borrowed value   : "); println(ref)
+
+    let factor = 3
+    let scale = lambda (x: Int) => x * factor
+    let scaled = 14 |> scale
+    print("4. Lambda 14|>scale : "); println(scaled)
+
+    prove 10 + 32 == 42
+    let q = safe_div(84, 2)
+    print("5. Phi safe_div     : "); println(q)
+
+    let gen_val = identity<Int>(99)
+    let fact5 = factorial(5)
+    print("6. Generic + 5!     : "); println(gen_val + fact5)
+
+    let t1 = spawn worker(5)
+    let t2 = spawn worker(6)
+    let r1 = await t1
+    let r2 = await t2
+    print("7. M:N Async Fibers : "); println(r1 + r2)
+
+    let folded = (2 + 3) * 10 - 8
+    let unused_dead_var = 999999
+    print("8. Constant Folded  : "); println(folded)
+
+    let scoped_sum = scope_demo()
+    print("9. Scope ARC+GC sum : "); println(scoped_sum)
+    gc_collect()
+    mem_stats()
+    return 0
+}

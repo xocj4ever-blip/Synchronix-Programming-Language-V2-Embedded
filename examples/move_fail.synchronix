@@ -1,0 +1,8 @@
+// SPDX-License-Identifier: Apache-2.0
+// Negative test: Ownership Checker must reject use-after-move!
+func main() -> Int {
+    let x = 10
+    let y = move x
+    println(x)
+    return y
+}

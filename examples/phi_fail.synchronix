@@ -1,0 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Negative test: Phi Formal Verification must statically refute false proofs!
+func main() -> Int {
+    prove 2 + 2 == 5
+    return 0
+}
